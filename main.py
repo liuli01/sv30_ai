@@ -26,12 +26,6 @@ settings = Settings()
 
 GET_IMAGE_URL=settings.GET_IMAGE_URL
 CAMERA_API=GET_IMAGE_URL.split("/ipccamera")[0]
-
-#%%
-# GET_IMAGE_URL="http://10.9.0.9:8080/ipccamera/getimg/localcamera-0"
-# CAMERA_API=GET_IMAGE_URL.split("/ipccamera")[0]
-
-
 DETECTION_URL = "/v1/object-detection/yolov5s"
 class_name_dict={0:"0",1:"1",2:"10",3:"point",4:"sewage"}
 
