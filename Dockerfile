@@ -1,6 +1,11 @@
 # 使用官方 Python 镜像
 FROM python:3.9-slim
 
+# 安装 libGL.so.1 依赖
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
 # 设置时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo 'Asia/Shanghai' > /etc/timezone
