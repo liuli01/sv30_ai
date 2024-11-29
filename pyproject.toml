@@ -1,0 +1,25 @@
+[project]
+name = "sv30_ai"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "liuli_computer@hotmail.com", email = "liuli_computer@hotmail.com"},
+]
+dependencies = [
+    "loguru>=0.7.2",
+    "fastapi>=0.115.5",
+    "inference>=0.9.23",
+    "python-multipart>=0.0.17",
+    "uvicorn>=0.32.1",
+]
+requires-python = ">=3.9.0"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = true
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
