@@ -3,7 +3,7 @@ FROM python:3.9-slim
 
 # 安装 libGL.so.1 依赖
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # 设置时区
