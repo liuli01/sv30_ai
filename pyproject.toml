@@ -13,7 +13,7 @@ dependencies = [
     "uvicorn>=0.32.1",
 ]
 requires-python = ">=3.9.0"
-readme = ""
+readme = "README.md"
 license = {text = "MIT"}
 
 
