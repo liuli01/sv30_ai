@@ -8,9 +8,10 @@ RUN echo 'Asia/Shanghai' > /etc/timezone
 
 
 # 设置环境变量
-ENV API_KEY=" "
-ENV API_URL="http://sv30_camera:9001"
+
 ENV GET_IMAGE_URL="http://sv30_camera:8080/ipccamera/getimg/localcamera-0"
+ENV API_URL="http://sv30_camera:9001"
+ENV API_KEY="token"
 
 # 设置工作目录
 WORKDIR /app
