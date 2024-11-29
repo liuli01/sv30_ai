@@ -8,8 +8,8 @@ RUN echo 'Asia/Shanghai' > /etc/timezone
 # 设置工作目录
 WORKDIR /app
 
-# 复制 PDM 配置文件和锁文件
-COPY pyproject.toml pdm.lock ./
+# 复制项目代码
+COPY . .
 
 # 安装 PDM
 RUN pip install pdm
@@ -17,8 +17,7 @@ RUN pip install pdm
 # 安装项目依赖
 RUN pdm install
 
-# 复制项目代码
-COPY . .
+
 
 # 暴露端口 8000
 EXPOSE 5000
