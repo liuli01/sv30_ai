@@ -7,10 +7,11 @@ from config import Settings
 settings = Settings()
 api_url = settings.API_URL
 api_key = settings.API_KEY
+model_id=settings.MODEL_ID
 
 client = InferenceHTTPClient(api_url,api_key) 
 def noplot_result(input_image):
-    with client.use_model(model_id="sv30-v2/7"):
+    with client.use_model(model_id=model_id):
         results = client.infer(input_image)
     return results
 

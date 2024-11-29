@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     API_URL: str = Field(default="", validation_alias='API_URL')
     API_KEY: str = Field(default="", validation_alias='API_KEY')
     GET_IMAGE_URL: str = Field(default="", validation_alias='GET_IMAGE_URL')
+    MODEL_ID: str = Field(default="", validation_alias='MODEL_ID')
 
 if __name__ == "__main__":
     settings = Settings()

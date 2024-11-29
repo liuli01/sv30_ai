@@ -23,8 +23,9 @@ RUN pdm install
 EXPOSE 5000
 
 # 设置环境变量
+ENV MODEL_ID="sv30-v2/7"
 ENV GET_IMAGE_URL="http://sv30_camera:8080/ipccamera/getimg/localcamera-0"
-ENV API_URL="http://sv30_camera:9001"
+ENV API_URL="http://inference-server-cpu:9001"
 ENV API_KEY="token"
 
 # 设置启动命令

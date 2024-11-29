@@ -11,6 +11,7 @@ dependencies = [
     "inference>=0.9.23",
     "python-multipart>=0.0.17",
     "uvicorn>=0.32.1",
+    "opencv-python-headless>=4.10.0.84",
 ]
 requires-python = ">=3.9.0"
 readme = "README.md"
