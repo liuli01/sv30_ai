@@ -24,10 +24,11 @@ COPY . .
 EXPOSE 5000
 
 # 设置环境变量
-ENV API_KEY=""
+ENV API_KEY="abc"
 ENV API_URL="http://sv30_camera:9001"
 ENV GET_IMAGE_URL="http://sv30_camera:8080/ipccamera/getimg/localcamera-0"
 
-# 运行 FastAPI
-CMD uvicorn main:app --host 0.0.0.0 --port 5000
+
+# 设置启动命令
+CMD ["pdm", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 
