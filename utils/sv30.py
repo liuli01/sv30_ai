@@ -41,7 +41,7 @@ def calculate_sv30(predictions,height=1080):
                 scale_10_y = height - (pred['y'] - pred['height'] / 2 )
 
     # 计算 SV30 读数
-    print(sewage_y,point_y,scale_1_y,scale_10_y)
+    # print(sewage_y,point_y,scale_1_y,scale_10_y)
     if sewage_y is not None and point_y is not None and scale_1_y is not None and scale_10_y is not None:
         max_height = max(sewage_y, point_y)
         value = get_scale(max_height,scale_1_y,scale_10_y,10)
