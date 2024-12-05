@@ -6,9 +6,9 @@ import shutil
 from utils.infer import plot_result,noplot_result
 from utils.sv30 import calculate_sv30
 import requests
-from config import Settings
-
-
+import os
+import dotenv
+dotenv.load_dotenv()
 
 loguru.logger.add(
     "log/app.log",
@@ -22,9 +22,7 @@ logger=loguru.logger
 
 app = FastAPI(redoc_url=None)
 
-settings = Settings()
-
-GET_IMAGE_URL=settings.GET_IMAGE_URL
+GET_IMAGE_URL=str(os.getenv("GET_IMAGE_URL"))
 CAMERA_API=GET_IMAGE_URL.split("/ipccamera")[0]
 DETECTION_URL = "/v1/object-detection/yolov5s"
 class_name_dict={0:"0",1:"1",2:"10",3:"point",4:"sewage"}

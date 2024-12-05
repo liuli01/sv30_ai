@@ -32,15 +32,16 @@ def calculate_sv30(predictions,height=1080):
     for pred in predictions:
         if isinstance(pred, dict):
             if pred.get('class') == 'sewage':
-                sewage_y = height - (pred['y']+ pred['height'] / 2 )
+                sewage_y = height - (pred['y']- pred['height'] / 2 )
             elif pred.get('class') == 'point':
-                point_y = height - (pred['y'] + pred['height'] / 2)  # 获取污泥与水体交界点的最高点
+                point_y = height - (pred['y'] - pred['height'] / 2)  # 获取污泥与水体交界点的最高点
             elif pred.get('class') == '1':
-                scale_1_y = height - (pred['y'] + pred['height'] / 2 )
+                scale_1_y = height - (pred['y'] - pred['height'] / 2 )
             elif pred.get('class') == '10':
-                scale_10_y = height - (pred['y'] + pred['height'] / 2 )
+                scale_10_y = height - (pred['y'] - pred['height'] / 2 )
 
     # 计算 SV30 读数
+    print(sewage_y,point_y,scale_1_y,scale_10_y)
     if sewage_y is not None and point_y is not None and scale_1_y is not None and scale_10_y is not None:
         max_height = max(sewage_y, point_y)
         value = get_scale(max_height,scale_1_y,scale_10_y,10)
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     # 测试数据
     from infer import plot_result
 
-    predictions = plot_result("utils/3.jpg","predict.jpg")["predictions"] # type: ignore
+    predictions = plot_result("upload/4.jpg","predict/predict.jpg")["predictions"] # type: ignore
    
     print(predictions)
     # 计算 SV30 读数

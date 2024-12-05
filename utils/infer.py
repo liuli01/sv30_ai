@@ -2,12 +2,15 @@
 from inference_sdk import InferenceHTTPClient
 import supervision as sv
 import cv2
-from config import Settings
+# from config import settings
+import os
+import dotenv
+dotenv.load_dotenv()
 
-settings = Settings()
-api_url = settings.API_URL
-api_key = settings.API_KEY
-model_id=settings.MODEL_ID
+api_url =str(os.getenv("API_URL"))
+api_key = str(os.getenv("API_KEY"))
+model_id=str(os.getenv("MODEL_ID"))
+
 
 client = InferenceHTTPClient(api_url,api_key) 
 def noplot_result(input_image):
@@ -41,6 +44,6 @@ def plot_result(input_image,output_image):
         return None
 
 if __name__ == "__main__":
-    print(noplot_result("https://www.helloimg.com/i/2024/11/28/6747e1920dbf7.jpg"))
-    # print(noplot_result("test.jpg"))
-    # plot_result("test.jpg","predict.jpg")
+    print(noplot_result("http://10.9.0.9:8080/ipccamera/img/2024-12-05/camera_1733381322.jpg"))
+    print(noplot_result("upload/test.jpg"))
+    plot_result("upload/test.jpg","predict/predict.jpg")
