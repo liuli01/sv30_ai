@@ -73,8 +73,8 @@ async  def img_upload(image : UploadFile= File(...)):
         f.write(content)
     
     results=plot_result(save_path,predict_path)
-    sv30=calculate_sv30(results["predictions"]) # type: ignore
-    return {"detail":RET.OK,"water_percent":sv30,"water_confidence":0.9,"sPicFileName":save_path}
+    sv30,conf=calculate_sv30(results["predictions"]) # type: ignore
+    return {"detail":RET.OK,"water_percent":sv30,"water_confidence":conf,"sPicFileName":save_path}
 
 
 @app.post(f"{DETECTION_URL}/water",summary='根据图片url，不保存上传文件，不返回识别后图片url，速度识别快')
@@ -87,15 +87,13 @@ async def detection_water():
             image_url = f"{CAMERA_API}{data['url']}"
             logger.info(image_url)
             results=noplot_result(image_url)
-            sv30=calculate_sv30(results["predictions"]) # type: ignore
+            sv30,conf=calculate_sv30(results["predictions"]) # type: ignore
             water=1-sv30
-            logger.info(f"检测成功,water_percent:{water},water_confidence:0.9,sPicFileName:{image_url}")
-            return {"detail":RET.OK,"water_percent":water,"water_confidence":0.9,"sPicFileName":image_url}
-
+            logger.info(f"检测成功,water_percent:{water},water_confidence:{conf},sPicFileName:{image_url}")
+            return {"detail":RET.OK,"water_percent":water,"water_confidence":{conf},"sPicFileName":image_url}
         else:
             logger.error("视频截图接口程序报错")
             return {"detail": RET.SERVERERR, "message": "视频截图接口程序报错"}
-
     else:
         logger.error("截图接口通讯失败")
         return {"detail": RET.SERVERERR, "message": "视频截图接口网络通讯失败"}
@@ -110,14 +108,12 @@ async def detection_sewage():
             image_url = f"{CAMERA_API}{data['url']}"
             logger.info(image_url)
             results=noplot_result(image_url)
-            sv30=calculate_sv30(results["predictions"]) # type: ignore
-            logger.info(f"检测成功,sewage_percent:{sv30},sewage_confidence:0.9,sPicFileName:{image_url}")
-            return {"detail":RET.OK,"sewage_percent":sv30,"sewage_confidence":0.9,"sPicFileName":image_url}
-
+            sv30,conf=calculate_sv30(results["predictions"]) # type: ignore
+            logger.info(f"检测成功,sewage_percent:{sv30},sewage_confidence:{conf},sPicFileName:{image_url}")
+            return {"detail":RET.OK,"sewage_percent":sv30,"sewage_confidence":{conf},"sPicFileName":image_url}
         else:
             logger.error("视频截图接口程序报错")
             return {"detail": RET.SERVERERR, "message": "视频截图接口程序报错"}
-
     else:
         logger.error("截图接口通讯失败")
         return {"detail": RET.SERVERERR, "message": "视频截图接口网络通讯失败"}

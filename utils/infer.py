@@ -26,7 +26,7 @@ def plot_result(input_image,output_image):
         # load the results into the supervision Detections api
         detections = sv.Detections.from_inference(results)
         # create supervision annotators
-        bounding_box_annotator = sv.BoundingBoxAnnotator()
+        bounding_box_annotator = sv.BoxAnnotator()
         label_annotator = sv.LabelAnnotator()
 
         # annotate the image with our inference results
@@ -44,6 +44,6 @@ def plot_result(input_image,output_image):
         return None
 
 if __name__ == "__main__":
-    print(noplot_result("http://10.9.0.9:8080/ipccamera/img/2024-12-05/camera_1733381322.jpg"))
-    print(noplot_result("upload/test.jpg"))
-    plot_result("upload/test.jpg","predict/predict.jpg")
+    # print(noplot_result("http://10.9.0.9:8080/ipccamera/img/2024-12-05/camera_1733381322.jpg"))
+    print(noplot_result("tests/3.jpg"))
+    # plot_result("tests/3.jpg","predict/predict.jpg")
