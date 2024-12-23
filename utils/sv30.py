@@ -27,7 +27,7 @@ def calculate_sv30(predictions,height=1080):
     point_y = None
     scale_1_y = None
     scale_10_y = None
-
+    point_data = []  # 用于存储所有 point 的 (y, confidence)
     # 解析预测结果，获取各类别的 y 坐标
     for pred in predictions:
         if isinstance(pred, dict):
@@ -37,6 +37,7 @@ def calculate_sv30(predictions,height=1080):
             elif pred.get('class') == 'point':
                 point_y = height - (pred['y'] - pred['height'] / 2)  # 获取污泥与水体交界点的最高点
                 point_y_conf = float(pred['confidence'])
+                point_data.append((point_y, point_y_conf)) 
             elif pred.get('class') == '1':
                 scale_1_y = height - (pred['y'] - pred['height'] / 2 )
             elif pred.get('class') == '10':
@@ -45,6 +46,7 @@ def calculate_sv30(predictions,height=1080):
     # 计算 SV30 读数
     # print(sewage_y,point_y,scale_1_y,scale_10_y)
     if sewage_y is not None and point_y is not None and scale_1_y is not None and scale_10_y is not None:
+        point_y, conf = min(point_data, key=lambda x: x[0])
         max_height = max(sewage_y, point_y)
         value = get_scale(max_height,scale_1_y,scale_10_y,10)
         sv30 = round(value/10, 2)
@@ -67,8 +69,9 @@ def calculate_sv30(predictions,height=1080):
 if __name__ == "__main__":
     # 测试数据
     from infer import plot_result
+    image_name="7.jpg"
 
-    predictions = plot_result("tests/5.jpg","predict/predict.jpg")["predictions"] # type: ignore
+    predictions = plot_result(f"tests/{image_name}",f"predict/{image_name}")["predictions"] # type: ignore
    
     print(predictions)
     # 计算 SV30 读数
