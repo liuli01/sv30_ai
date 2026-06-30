@@ -27,5 +27,8 @@
 **/models
 
 **/.pdm-build
+**/pdm.lock
 *.jpg
 **/*.log
+**/tests
+**/.pytest_cache
