@@ -6,6 +6,7 @@ import dotenv
 import loguru
 import requests
 from fastapi import FastAPI, responses
+from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 dotenv.load_dotenv()
@@ -62,7 +63,7 @@ def call_workflow(
 
     if resp.status_code != 200:
         logger.error("workflow 返回异常 {}, body={}", resp.status_code, resp.text)
-        raise RuntimeError(f"workflow 返回 {resp.status_code}")
+        raise RuntimeError(f"workflow 返回 {resp.status_code}: {resp.text[:200]}")
 
     try:
         data = resp.json()
@@ -71,10 +72,26 @@ def call_workflow(
         raise RuntimeError(f"workflow 响应格式错误: {e}")
 
     try:
-        raw = data["node_outputs"]["3"]["computed_values"][0]
+        node = data["node_outputs"]["3"]
+    except (KeyError, TypeError) as e:
+        logger.error("workflow 缺少 node_outputs[3]: body={}", data)
+        raise RuntimeError(f"workflow 缺少 node_outputs[3]: {e}")
+
+    try:
+        values = node["computed_values"]
+    except (KeyError, TypeError) as e:
+        logger.error("workflow 缺少 computed_values: node={}", node)
+        raise RuntimeError(f"workflow 缺少 computed_values: {e}")
+
+    if not values:
+        logger.warning("workflow 未检出结果, value=0, max_conf=0")
+        return 0.0, 0.0
+
+    try:
+        raw = values[0]
         raw_conf = data["max_conf"]
     except (KeyError, IndexError, TypeError) as e:
-        logger.error("workflow 数据字段缺失: {}, body={}", e, data)
+        logger.error("workflow 数据字段缺失: values={}, body={}", values, data)
         raise RuntimeError(f"workflow 缺少字段: {e}")
 
     try:
@@ -100,6 +117,11 @@ def health():
 
 # ── 业务端点 ────────────────────────────────────────
 # 所有端点共享的逻辑：从摄像头获取截图 → 调用 workflow → 返回结果
+
+
+class TestBody(BaseModel):
+    image_url: str
+    server_url: str = "http://127.0.0.1:9924"
 
 
 def _fetch_image_url() -> str:
@@ -143,20 +165,18 @@ async def detection_sewage():
 
 
 @app.post("/v1/object-detection/yolov5s/test")
-async def detection_test(body: dict):
+async def detection_test(body: TestBody):
     """测试端点：直接传入图片 URL 进行识别，不走摄像头截图。"""
-    image_url = body.get("image_url", "")
-    if not image_url:
+    if not body.image_url:
         return responses.JSONResponse(
             status_code=400,
             content={"detail": SERVERERR, "message": "缺少 image_url"},
         )
-    server_url = body.get("server_url", "http://127.0.0.1:9924")
-    sv30, conf = call_workflow(image_url=image_url, server_url=server_url)
+    sv30, conf = call_workflow(image_url=body.image_url, server_url=body.server_url)
     logger.info("test 检测成功: {}%, conf={}", sv30 * 100, conf)
     return {
         "detail": OK,
         "sewage_percent": sv30,
         "sewage_confidence": conf,
-        "sPicFileName": image_url,
+        "sPicFileName": body.image_url,
     }

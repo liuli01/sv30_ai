@@ -75,12 +75,25 @@ def test_call_workflow_invalid_json(mock_post):
 
 
 @patch("main.requests.post")
-def test_call_workflow_missing_fields(mock_post):
+def test_call_workflow_missing_node(mock_post):
     mock_post.return_value.status_code = 200
     mock_post.return_value.json.return_value = {"node_outputs": {}}
 
-    with pytest.raises(RuntimeError, match="缺少字段"):
+    with pytest.raises(RuntimeError, match="缺少 node_outputs"):
         call_workflow("x.jpg")
+
+
+@patch("main.requests.post")
+def test_call_workflow_empty_computed_values(mock_post):
+    mock_post.return_value.status_code = 200
+    mock_post.return_value.json.return_value = {
+        "node_outputs": {"3": {"computed_values": []}},
+        "max_conf": 0.9,
+    }
+
+    value, max_conf = call_workflow("x.jpg")
+    assert value == 0.0
+    assert max_conf == 0.0
 
 
 @patch("main.requests.post")
