@@ -6,11 +6,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-# 先复制依赖清单，利用 Docker 缓存层
+# 复制依赖清单，安装到系统 Python
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --system --no-install-project
 
-# 再复制源码
+# 复制源码
 COPY main.py ./
 
 # === 运行阶段 ===
@@ -25,8 +25,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# 从 builder 复制已安装的依赖
-COPY --from=builder /app /app
+# 从 builder 复制已安装的依赖（系统 site-packages + 源码）
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=builder /app/main.py ./
 
 EXPOSE 5000
 
