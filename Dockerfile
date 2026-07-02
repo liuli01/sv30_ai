@@ -8,7 +8,8 @@ WORKDIR /app
 
 # 复制依赖清单，安装到系统 Python
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --system --no-install-project
+ENV UV_SYSTEM_PYTHON=1
+RUN uv sync --frozen --no-dev --no-install-project
 
 # 复制源码
 COPY main.py ./
