@@ -29,18 +29,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            liuli01/sv30-ai
             ghcr.io/${{ steps.owner.outputs.owner }}/sv30-ai
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,latest
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
