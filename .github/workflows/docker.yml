@@ -49,10 +49,39 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and load image
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          load: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Health check
+        run: |
+          FIRST_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -1)
+          echo "Starting container from $FIRST_TAG ..."
+          docker run -d --name health-check -p 5000:5000 "$FIRST_TAG"
+
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5000/health 2>/dev/null; then
+              echo "✅ Health check passed"
+              docker rm -f health-check
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "❌ Health check timed out"
+          docker logs health-check
+          docker rm -f health-check
+          exit 1
+
+      - name: Push images
+        run: |
+          echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
+            [ -z "$tag" ] && continue
+            echo "Pushing $tag ..."
+            docker push "$tag"
+          done
