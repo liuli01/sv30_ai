@@ -44,15 +44,20 @@ app.add_middleware(
 )
 
 GET_IMAGE_URL = str(os.getenv("GET_IMAGE_URL"))
+WORKFLOW = os.getenv("WORKFLOW", "sv30")
+SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:9924").strip()
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8005").strip()
+WORKFLOW_URL = f"{API_URL}/v1/workflow/execute"
 CAMERA_API = GET_IMAGE_URL.split("/ipccamera")[0]
 
 
 def call_workflow(
-    image_url: str, server_url: str = "http://127.0.0.1:9924"
+    image_url: str, server_url: str = ""
 ) -> tuple[float, float]:
     """调用 workflow 接口进行识别，返回 (sv30, max_conf)。"""
-    url = "http://127.0.0.1:8005/v1/workflow/execute"
-    payload = {"workflow": "sv30", "image_url": image_url, "server_url": server_url}
+    server_url = server_url or SERVER_URL
+    url = WORKFLOW_URL
+    payload = {"workflow": WORKFLOW, "image_url": image_url, "server_url": server_url}
     logger.info("调用 workflow, image_url={}", image_url)
 
     try:
@@ -121,12 +126,12 @@ def health():
 
 class TestBody(BaseModel):
     image_url: str
-    server_url: str = "http://127.0.0.1:9924"
+    server_url: str = ""
 
 
 def _fetch_image_url() -> str:
     """请求摄像头截图接口，返回可直接访问的图片 URL。"""
-    resp = requests.get(GET_IMAGE_URL, timeout=20)
+    resp = requests.get(GET_IMAGE_URL, timeout=30)
     if resp.status_code != 200:
         raise RuntimeError("视频截图接口网络通讯失败")
     data = resp.json()
